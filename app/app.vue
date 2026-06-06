@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import IcebergParser from './lib/iceberg/parser'
-const text = `level "First Level"
+const text = `max_random_offset = 10
+
+level "First Level"
   Google
   Youtube
   Facebook
@@ -18,12 +20,12 @@ level "Third Level"
   4chan
   Liveleak
 `
-const source = ref(text)
-const icebergJson = ref()
 
-const levels = computed(() => {
-  icebergJson.value = IcebergParser(source.value)
-})
+const source = ref(text)
+
+const result = computed(() => IcebergParser(source.value))
+const levels = computed(() => result.value.levels)
+const config = computed(() => result.value.config)
 
 </script>
 
@@ -31,9 +33,7 @@ const levels = computed(() => {
   <MonacoEditor v-model="source" :levels="levels" lang="markdown" :style="{ width: '100%', height: '200px' }"
     :options="{ theme: 'vs-dark' }" />
 
-    <div v-for="iceberg of icebergJson">
-      {{ iceberg.title }}
-      {{iceberg.items}}
-    </div>
+
+  <Iceberg :levels="levels" :config="config" />
 
 </template>
