@@ -1,60 +1,116 @@
-export interface IcebergConfig {
-  maxRandomOffset: number
+import type { IcebergConfig, IcebergLevel, IcebergResult } from './types'
+import { getTierMetadata } from './zones'
+
+export * from './types'
+
+const defaultConfig: IcebergConfig = {
+  maxRandomOffset: 10,
 }
 
-export interface IcebergLevel {
-  title: string
-  items: string[]
+export const detectLevelName = (text: string): string => {
+  return text
+    .replace(/^level\s+/i, '')
+    .replaceAll('"', '')
+    .trim()
 }
 
-export interface IcebergResult {
-  levels: IcebergLevel[]
-  config: IcebergConfig
-}
+export const IcebergParser = (icebergLanguageText: string): IcebergResult => {
+  const rows = icebergLanguageText.split('\n')
+  const rawLevels: Array<{ title: string; items: string[]; line: number }> = []
+  const config: IcebergConfig = { ...defaultConfig }
+  let currentRowIndex: number = -1
+  let isValid = true
+  let error: string | undefined = undefined
+  let errorLine: number | undefined = undefined
 
-const defaultConfig = {
-  maxRandomOffset: 10
-}
+  for (let lineIdx = 0; lineIdx < rows.length; lineIdx++) {
+    const rawRow = rows[lineIdx] ?? ''
+    const trimmed = rawRow.trim()
 
-const IcebergParser = (icebergLanguageText: string): IcebergResult => {
-  const rows = icebergLanguageText.split("\n");
-  const levels: Array<{ title: string; items: string[] }> = [];
-  const config = { ...defaultConfig }
-  let currentRowIndex: number = 0
+    if (trimmed === '' || trimmed.startsWith('//')) {
+      continue
+    }
 
-  for (const row of rows) {
-    const isRowEmpty = row.trim() == ''
-    if (isRowEmpty) continue
-
-    if (row.startsWith("max_random_offset")) {
-      const value = row.split("=")[1]?.trim()
-      if (value !== undefined) {
-        config.maxRandomOffset = parseFloat(value)
+    if (rawRow.startsWith('max_random_offset')) {
+      const parts = rawRow.split('=')
+      if (parts.length < 2) {
+        isValid = false
+        error = `Invalid configuration format at line ${lineIdx + 1}`
+        errorLine = lineIdx + 1
+        continue
+      }
+      const val = parseFloat(parts[1]?.trim() ?? '')
+      if (isNaN(val)) {
+        isValid = false
+        error = `Invalid number for max_random_offset at line ${lineIdx + 1}`
+        errorLine = lineIdx + 1
+      } else {
+        config.maxRandomOffset = val
       }
       continue
     }
 
-    if (row.startsWith("level ")) {
-      const rowTitle = detectLevelName(row);
-
-      levels.push({ title: rowTitle, items: [] });
-      currentRowIndex = levels.length - 1
-
-      continue;
+    if (/^level\s+/i.test(rawRow)) {
+      const rowTitle = detectLevelName(rawRow)
+      rawLevels.push({
+        title: rowTitle || `Level ${rawLevels.length + 1}`,
+        items: [],
+        line: lineIdx + 1,
+      })
+      currentRowIndex = rawLevels.length - 1
+      continue
     }
 
-    if (row.startsWith("  ")) {
-      levels[currentRowIndex]?.items.push(row.trim())
+    if (/^(\s{2,}|\t)/.test(rawRow)) {
+      if (currentRowIndex === -1) {
+
+        rawLevels.push({
+          title: 'First Level',
+          items: [],
+          line: lineIdx + 1,
+        })
+        currentRowIndex = 0
+      }
+      rawLevels[currentRowIndex]?.items.push(trimmed)
+      continue
+    }
+
+    if (!trimmed.startsWith('#') && !trimmed.startsWith('-')) {
+
+      isValid = false
+      error = `Unrecognized syntax at line ${lineIdx + 1}: "${trimmed.slice(0, 20)}..."`
+      errorLine = lineIdx + 1
     }
   }
 
-  return { levels, config }
-};
+  const totalLevels = rawLevels.length
+  let totalEntries = 0
 
-const detectLevelName = (text: string) => {
-  return text.replace(/^level\s+/i, "")
-    .replaceAll('"', "")
-    .trim();
+  const levels: IcebergLevel[] = rawLevels.map((raw, idx) => {
+    const meta = getTierMetadata(idx, totalLevels)
+    totalEntries += raw.items.length
+    return {
+      id: `tier-${idx}-${raw.title.toLowerCase().replace(/\s+/g, '-')}`,
+      index: idx,
+      levelNumber: idx + 1,
+      title: raw.title,
+      zone: meta.zone,
+      depth: meta.depth,
+      color: meta.color,
+      items: raw.items,
+    }
+  })
+
+  return {
+    levels,
+    config,
+    totalLevels,
+    totalEntries,
+    lineCount: rows.length,
+    isValid,
+    error,
+    errorLine,
+  }
 }
 
-export default IcebergParser;
+export default IcebergParser

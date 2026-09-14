@@ -1,39 +1,73 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import IcebergParser from './lib/iceberg/parser'
-const text = `max_random_offset = 10
+import AppHeader from './components/layout/AppHeader.vue'
+import TabBar from './components/layout/TabBar.vue'
+import AppToolbar from './components/layout/AppToolbar.vue'
+import SplitPane from './components/layout/SplitPane.vue'
+import MonacoEditorWrapper from './components/editor/MonacoEditorWrapper.client.vue'
+import EditorStatusBar from './components/editor/EditorStatusBar.vue'
+import PreviewPanel from './components/preview/PreviewPanel.vue'
+import { useIceberg } from './composables/useIceberg'
 
-level "First Level"
-  Google
-  Youtube
-  Facebook
-  Instagram
-  Twitter
+const { exportToPng } = useIceberg()
+const previewPanelRef = ref<any>(null)
 
-level "Second Level"
-  Reddit
-  Myspace
-  Orkut
-  Dailymotion
-
-level "Third Level"
-  4chan
-  Liveleak
-`
-
-const source = ref(text)
-
-const result = computed(() => IcebergParser(source.value))
-const levels = computed(() => result.value.levels)
-const config = computed(() => result.value.config)
-
+const handleExport = () => {
+  if (previewPanelRef.value?.exportTarget) {
+    exportToPng(previewPanelRef.value.exportTarget)
+  }
+}
 </script>
 
 <template>
-  <MonacoEditor v-model="source" :levels="levels" lang="markdown" :style="{ width: '100%', height: '200px' }"
-    :options="{ theme: 'vs-dark' }" />
+  <div class="h-screen w-screen flex flex-col bg-zinc-950 text-zinc-100 overflow-hidden font-sans select-none">
+        <AppHeader @export="handleExport" />
 
+        <TabBar />
 
-  <Iceberg :levels="levels" :config="config" />
+        <AppToolbar />
 
+        <SplitPane class="flex-1">
+            <template #left>
+        <div class="h-full w-full flex flex-col bg-zinc-900 overflow-hidden">
+          <div class="flex-1 min-h-0 relative">
+            <MonacoEditorWrapper />
+          </div>
+          <EditorStatusBar />
+        </div>
+      </template>
+
+            <template #right>
+        <PreviewPanel ref="previewPanelRef" />
+      </template>
+    </SplitPane>
+  </div>
 </template>
+
+<style>
+/* Reset básico e estilos para scrollbar */
+html, body, #__nuxt {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+</style>
