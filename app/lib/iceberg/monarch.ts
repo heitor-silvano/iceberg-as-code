@@ -6,7 +6,7 @@ export const ICEBERG_THEME_ID = 'iceberg-dark'
 export const icebergLanguageDefinition: monaco.languages.IMonarchLanguage = {
   defaultToken: '',
   tokenPostfix: '.iceberg',
-
+  
   keywords: ['level', 'max_random_offset'],
 
   tokenizer: {

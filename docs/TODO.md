@@ -7,7 +7,7 @@ Qualquer agente de Inteligência Artificial ou Desenvolvedor deve consultar este
 - (Nenhuma tarefa bloqueante no momento).
 
 ## 📅 Próximas Tarefas Aprovadas
-- [ ] **Integração do SVG Oficial do Iceberg**:
+- [x] **Integração do SVG Oficial do Iceberg**:
   - Receber o ativo gráfico do Iceberg em vetor.
   - Substituir a cor sólida de fundo (`#bfe3f7`) do `PreviewPanel.vue` pelo background escalável contendo o Iceberg real, assegurando que os blocos de Tiers alinhem corretamente com a montanha de gelo na imagem.
 - [ ] **Botão Templates**:
