@@ -4,34 +4,55 @@ import type { IcebergResult } from '../lib/iceberg/types'
 import { toPng } from 'html-to-image'
 
 const DEFAULT_CODE = `settings: {
-  title: "untitled-tier-list";
+  title: "untitled-1";
   background_alpha: 95;
   font: "sans";
 }
 
 tier "First Tier"
-  Google
-  Youtube
-  Facebook
-  Instagram
-  Twitter
-
-tier "Second Tier"
-  Reddit
-  Myspace
-  Orkut
-  Dailymotion
-
-tier "Third Tier"
-  4chan
-  Liveleak
+  Item 1
+  Item 2
 `
 
 const STORAGE_KEY = 'iceberg_code_content'
+const TABS_KEY = 'iceberg_tabs'
+const ACTIVE_TAB_KEY = 'iceberg_active_tab'
 const SPLIT_KEY = 'iceberg_split_ratio'
 
-const code = ref<string>(DEFAULT_CODE)
-const isDirty = ref<boolean>(false)
+export interface Tab {
+  id: string
+  code: string
+}
+
+const tabs = ref<Tab[]>([{ id: 'tab-1', code: DEFAULT_CODE }])
+const activeTabId = ref<string>('tab-1')
+const dirtyMap = ref<Record<string, boolean>>({})
+
+const code = computed({
+  get: () => {
+    const t = tabs.value.find(t => t.id === activeTabId.value)
+    return t ? t.code : ''
+  },
+  set: (val: string) => {
+    const t = tabs.value.find(t => t.id === activeTabId.value)
+    if (t) {
+      t.code = val
+      dirtyMap.value[t.id] = true
+    } else if (tabs.value.length === 0) {
+      tabs.value.push({ id: 'tab-1', code: val })
+      activeTabId.value = 'tab-1'
+      dirtyMap.value['tab-1'] = true
+    }
+  }
+})
+
+const isDirty = computed({
+  get: () => !!dirtyMap.value[activeTabId.value],
+  set: (val: boolean) => {
+    dirtyMap.value[activeTabId.value] = val
+  }
+})
+
 const editorFontSize = ref<string>('13px')
 const previewZoom = ref<number>(100)
 const textStroke = ref<boolean>(false)
@@ -43,15 +64,35 @@ let isInitialized = false
 
 export function resetStorageForTest() {
   isInitialized = false
+  tabs.value = [{ id: 'tab-1', code: DEFAULT_CODE }]
+  activeTabId.value = 'tab-1'
+  dirtyMap.value = {}
 }
 
 function initStorage() {
   if (typeof window === 'undefined' || isInitialized) return
   isInitialized = true
 
-  const savedCode = localStorage.getItem(STORAGE_KEY)
-  if (savedCode !== null && savedCode.trim() !== '') {
-    code.value = savedCode
+  const savedTabsStr = localStorage.getItem(TABS_KEY)
+  const savedActive = localStorage.getItem(ACTIVE_TAB_KEY)
+  
+  if (savedTabsStr) {
+    try {
+      const parsed = JSON.parse(savedTabsStr)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        tabs.value = parsed
+        activeTabId.value = savedActive && parsed.some((t: Tab) => t.id === savedActive) 
+          ? savedActive 
+          : parsed[0].id
+      }
+    } catch {
+    }
+  } else {
+    const savedCode = localStorage.getItem(STORAGE_KEY)
+    if (savedCode !== null && savedCode.trim() !== '') {
+      tabs.value = [{ id: 'tab-1', code: savedCode }]
+      activeTabId.value = 'tab-1'
+    }
   }
 
   const savedSplit = localStorage.getItem(SPLIT_KEY)
@@ -63,18 +104,27 @@ function initStorage() {
   }
 
   let saveTimer: any = null
-  watch(code, (newVal) => {
-    isDirty.value = true
+  watch(() => tabs.value, (newTabs) => {
     if (typeof window !== 'undefined') {
       clearTimeout(saveTimer)
       saveTimer = setTimeout(() => {
         try {
-          localStorage.setItem(STORAGE_KEY, newVal)
-          isDirty.value = false
+          localStorage.setItem(TABS_KEY, JSON.stringify(newTabs))
+          localStorage.setItem(ACTIVE_TAB_KEY, activeTabId.value)
+          newTabs.forEach(t => { dirtyMap.value[t.id] = false })
+          const active = newTabs.find(t => t.id === activeTabId.value)
+          if (active) localStorage.setItem(STORAGE_KEY, active.code)
         } catch (e) {
-          // Ignore
         }
       }, 500)
+    }
+  }, { deep: true })
+  
+  watch(activeTabId, (newId) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(ACTIVE_TAB_KEY, newId)
+      const active = tabs.value.find(t => t.id === newId)
+      if (active) localStorage.setItem(STORAGE_KEY, active.code)
     }
   })
 
@@ -114,7 +164,6 @@ export function useIceberg() {
       }
       currentCode = currentCode.replace(settingsMatch[0], `settings: {${content}}`)
     } else {
-      // support removing old iceberg_title if it exists
       if (/^iceberg_title:.*$/m.test(currentCode)) {
         currentCode = currentCode.replace(/^iceberg_title:.*$/m, '')
       }
@@ -125,13 +174,56 @@ export function useIceberg() {
 
   const filename = computed({
     get() {
-      return ast.value.config.title || 'untitled-tier-list'
+      return ast.value.config.title || 'untitled-1'
     },
     set(newVal) {
-      const sanitized = newVal.trim() || 'untitled-tier-list'
+      const sanitized = newVal.trim() || 'untitled-1'
       updateSettingInCode('title', `"${sanitized}"`)
     }
   })
+
+  const getFilenameForTab = (tabCode: string) => {
+    const tmpAst = IcebergParser(tabCode)
+    return tmpAst.config.title || 'untitled'
+  }
+
+  const addTab = () => {
+    const existingTitles = tabs.value.map(t => getFilenameForTab(t.code))
+    let nextNum = 1
+    while (existingTitles.includes(`untitled-${nextNum}`)) {
+      nextNum++
+    }
+    const newId = 'tab-' + Date.now() + Math.random().toString(36).substr(2, 5)
+    tabs.value.push({
+      id: newId,
+      code: `settings: {
+  title: "untitled-${nextNum}";
+  background_alpha: 95;
+  font: "sans";
+}
+
+tier "New Tier"
+  Item 1
+`
+    })
+    activeTabId.value = newId
+  }
+
+  const closeTab = (id: string) => {
+    const idx = tabs.value.findIndex(t => t.id === id)
+    if (idx !== -1) {
+      tabs.value.splice(idx, 1)
+      if (tabs.value.length === 0) {
+        addTab()
+      } else if (activeTabId.value === id) {
+        activeTabId.value = tabs.value[Math.max(0, idx - 1)]?.id || ''
+      }
+    }
+  }
+
+  const reorderTabs = (newTabs: Tab[]) => {
+    tabs.value = newTabs
+  }
 
   const previewFont = computed({
     get() {
@@ -212,7 +304,7 @@ export function useIceberg() {
         }
       })
       const link = document.createElement('a')
-      const sanitizedName = filename.value.trim() || 'untitled-tier-list'
+      const sanitizedName = filename.value.trim() || 'untitled-1'
       link.download = `${sanitizedName}.png`
       link.href = dataUrl
       link.click()
@@ -224,10 +316,17 @@ export function useIceberg() {
   }
 
   return {
+    tabs,
+    activeTabId,
+    addTab,
+    closeTab,
+    reorderTabs,
+    getFilenameForTab,
     code,
     filename,
     ast,
     isDirty,
+    dirtyMap,
     editorFontSize,
     previewZoom,
     previewFont,

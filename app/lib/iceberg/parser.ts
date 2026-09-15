@@ -30,7 +30,7 @@ export const IcebergParser = (icebergLanguageText: string): IcebergResult => {
         if (key === 'title') {
           config.title = val
         } else if (key === 'background_alpha') {
-          const alpha = parseInt(val, 10)
+          const alpha = parseInt(val || '', 10)
           if (!isNaN(alpha)) config.backgroundAlpha = alpha
         } else if (key === 'font') {
           if (val === 'sans' || val === 'mono') config.font = val as 'sans' | 'mono'
