@@ -8,6 +8,7 @@ const {
   editorFontSize,
   previewZoom,
   previewFont,
+  textAlpha,
   insertLevel,
   zoomIn,
   zoomOut,
@@ -122,23 +123,48 @@ const selectFontSize = (size: string) => {
         </button>
       </div>
 
-            <div class="flex items-center bg-zinc-950 p-0.5 rounded-lg border border-zinc-800">
-        <button
-          type="button"
-          @click="previewFont = 'sans'"
-          class="px-2.5 py-0.5 text-[11px] rounded-md font-medium transition-all"
-          :class="previewFont === 'sans' ? 'bg-zinc-700 text-white shadow' : 'text-zinc-400 hover:text-zinc-200'"
-        >
-          Sans
-        </button>
-        <button
-          type="button"
-          @click="previewFont = 'mono'"
-          class="px-2.5 py-0.5 text-[11px] font-mono rounded-md transition-all"
-          :class="previewFont === 'mono' ? 'bg-zinc-700 text-white shadow' : 'text-zinc-400 hover:text-zinc-200'"
-        >
-          Mono
-        </button>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a10 10 0 0 1 0 20Z" fill="currentColor" />
+          </svg>
+          <span class="text-zinc-400 font-medium text-[11px]">Text Alpha</span>
+
+          <button
+            type="button"
+            role="switch"
+            :aria-checked="textAlpha"
+            @click="textAlpha = !textAlpha"
+            class="peer inline-flex h-[20px] w-[36px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            :class="textAlpha ? 'bg-zinc-200' : 'bg-zinc-700'"
+            title="Alternar opacidade do texto"
+          >
+            <span
+              class="pointer-events-none block h-4 w-4 rounded-full shadow-lg ring-0 transition-transform"
+              :class="textAlpha ? 'translate-x-4 bg-zinc-900' : 'translate-x-0 bg-zinc-400'"
+            ></span>
+          </button>
+        </div>
+
+        <div class="flex items-center bg-zinc-950 p-0.5 rounded-lg border border-zinc-800">
+          <button
+            type="button"
+            @click="previewFont = 'sans'"
+            class="px-2.5 py-0.5 text-[11px] rounded-md font-medium transition-all"
+            :class="previewFont === 'sans' ? 'bg-zinc-700 text-white shadow' : 'text-zinc-400 hover:text-zinc-200'"
+          >
+            Sans
+          </button>
+          <button
+            type="button"
+            @click="previewFont = 'mono'"
+            class="px-2.5 py-0.5 text-[11px] font-mono rounded-md transition-all"
+            :class="previewFont === 'mono' ? 'bg-zinc-700 text-white shadow' : 'text-zinc-400 hover:text-zinc-200'"
+          >
+            Mono
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -2,8 +2,6 @@
 import { ref, onUnmounted } from 'vue'
 import { useIceberg } from '~/composables/useIceberg'
 import TierBlock from './TierBlock.vue'
-import PreviewFooter from './PreviewFooter.vue'
-
 const { ast, previewZoom } = useIceberg()
 const exportTargetRef = ref<HTMLElement | null>(null)
 const scrollContainerRef = ref<HTMLElement | null>(null)
@@ -120,7 +118,5 @@ defineExpose({
         </div>
       </div>
     </div>
-
-        <PreviewFooter />
   </div>
 </template>

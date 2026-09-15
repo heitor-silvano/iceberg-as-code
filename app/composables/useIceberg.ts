@@ -153,6 +153,14 @@ export function useIceberg() {
         backgroundColor: '#bfe3f7',
         pixelRatio: 2,
         cacheBust: true,
+        width: previewElement.scrollWidth,
+        height: previewElement.scrollHeight,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left',
+          width: `${previewElement.scrollWidth}px`,
+          height: `${previewElement.scrollHeight}px`
+        }
       })
       const link = document.createElement('a')
       link.download = 'untitled-tier-list.png'
