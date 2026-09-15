@@ -13,17 +13,18 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col bg-[#bfe3f7] relative overflow-hidden select-none">
-        <div class="flex-1 overflow-auto p-6 flex flex-col items-center">
+  <div class="w-full h-full flex flex-col bg-gradient-to-b from-[#bfe3f7] to-[#000000] relative overflow-hidden select-none">
+    <div class="flex-1 overflow-auto flex flex-col items-center">
       <div
         ref="exportTargetRef"
-        class="w-full max-w-2xl relative p-6 rounded-xl transition-transform duration-100 ease-out origin-top min-h-[600px]"
+        class="w-full relative p-6 rounded-xl transition-transform duration-100 ease-out origin-top min-h-[800px]"
         :style="{ transform: `scale(${previewZoom / 100})` }"
       >
-        <!-- Background -->
-        <div class="absolute inset-0 z-0 flex flex-col items-center pointer-events-none">
-          <img src="/iceberg-tip.svg" class="w-[294px] shrink-0 relative z-10" />
-          <div class="w-full h-[45px] shrink-0 -mt-[45px] relative z-5">
+        <div class="absolute inset-0 z-0 flex flex-col items-center pointer-events-none mt-5">
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#2877D222] to-[#000000] z-[5] top-[121px]"></div>
+          
+          <img src="/iceberg-tip.svg" class="w-[294px] shrink-0 relative z-20" />
+          <div class="w-full h-[45px] shrink-0 -mt-[45px] relative z-10">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="waves" x="0" y="0" width="100" height="45" patternUnits="userSpaceOnUse">
@@ -33,10 +34,10 @@ defineExpose({
               <rect width="100%" height="100%" fill="url(#waves)" />
             </svg>
           </div>
-          <img src="/iceberg-body.svg" class="w-[446px] shrink-0 relative z-0 -mt-[10px]" />
+          <img src="/iceberg-body.svg" class="w-[446px] shrink-0 relative z-[4] -mt-[10px]" />
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#2877D2] to-[#0B1F36] z-0 top-[121px]"></div>
         </div>
 
-        <!-- Content -->
         <div class="relative z-10 flex flex-col space-y-4 w-full h-full">
           <template v-if="ast.levels.length > 0">
             <TierBlock
