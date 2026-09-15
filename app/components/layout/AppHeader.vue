@@ -34,13 +34,6 @@ const handleShare = async () => {
     </div>
 
         <div class="flex items-center space-x-3 text-xs">
-      <button
-        type="button"
-        class="text-zinc-400 hover:text-zinc-200 transition-colors px-2 py-1 rounded hover:bg-zinc-800/50"
-      >
-        Templates
-      </button>
-
             <button
         type="button"
         :disabled="isExporting"
