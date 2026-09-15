@@ -20,8 +20,6 @@ const { ast } = useIceberg()
         <span>UTF-8</span>
         <span>·</span>
         <span>LF</span>
-        <span>·</span>
-        <span class="text-zinc-300 font-medium">Iceberg</span>
       </div>
     </div>
   </div>
