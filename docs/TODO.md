@@ -14,6 +14,12 @@ Qualquer agente de Inteligência Artificial ou Desenvolvedor deve consultar este
   - Criar um Modal ou Dropdown que carregue exemplos de gelos (Icebergs) pré-escritos, alterando o estado `code` no `useIceberg`.
 - [ ] **Otimização do ExportToPNG**:
   - Garantir suporte em telas Retina (DPI altíssimo) gerando um PNG sem serrilhados (escala no `html-to-image`).
+- [ ] **Templates**
+- [ ] **Criação de outras abas**
+- [ ] **Feedback no editor de texto quando um item duplicado for escrito**
+- [ ] **Mudar favicon**
+- [ ] **Mudar logo da aplicação**
+- [ ] **Adicionar mudança de fonte programaticamente**
 
 ## 🐞 Bugs / Dívida Técnica
 - Quando nomes de níveis são extremamente grandes, o texto pode quebrar para a linha de baixo dependendo do tamanho da tela. Adicionar classe de `.truncate` ou flex-wrap com limites adequados.
