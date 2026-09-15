@@ -27,10 +27,8 @@ const handleShare = async () => {
 <template>
   <header class="h-12 bg-zinc-950 border-b border-zinc-800/80 px-4 flex items-center justify-between select-none shrink-0 z-20">
         <div class="flex items-center space-x-2.5">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-sky-500 to-cyan-300 flex items-center justify-center shadow-sm shadow-sky-500/20">
-        
-      </div>
-      <span class="font-semibold text-sm tracking-tight text-white">Iceberg as Code</span>
+      <img src="/app-icon.svg" alt="App Icon" class="w-5 h-5" />
+      <span class="font-mono font-semibold text-xl leading-none tracking-tight text-[#89CEFF]">Iceberg as Code</span>
     </div>
 
         <div class="flex items-center space-x-3 text-xs">
