@@ -11,7 +11,6 @@ import {
 const {
   code,
   editorFontSize,
-  editorWrap,
   setMonacoInstance,
 } = useIceberg()
 
@@ -47,7 +46,7 @@ onMounted(async () => {
       language: ICEBERG_LANGUAGE_ID,
       theme: ICEBERG_THEME_ID,
       fontSize: numericFontSize.value,
-      wordWrap: editorWrap.value,
+      wordWrap: 'on',
       automaticLayout: true,
       minimap: { enabled: false },
       scrollBeyondLastLine: false,
@@ -80,9 +79,7 @@ watch(numericFontSize, (newSize) => {
   editor?.updateOptions({ fontSize: newSize })
 })
 
-watch(editorWrap, (newWrap) => {
-  editor?.updateOptions({ wordWrap: newWrap })
-})
+
 
 watch(code, (newVal) => {
   if (!editor) return

@@ -6,11 +6,9 @@ const {
   ast,
   splitRatio,
   editorFontSize,
-  editorWrap,
   previewZoom,
   previewFont,
   insertLevel,
-  insertBullet,
   zoomIn,
   zoomOut,
   resetZoom,
@@ -24,13 +22,11 @@ const selectFontSize = (size: string) => {
   isFontDropdownOpen.value = false
 }
 
-const toggleWrap = () => {
-  editorWrap.value = editorWrap.value === 'on' ? 'off' : 'on'
-}
+
 </script>
 
 <template>
-  <div class="h-10 bg-zinc-900 border-b border-zinc-800 flex items-center select-none text-xs shrink-0 overflow-hidden">
+  <div class="h-10 bg-zinc-900 border-b border-zinc-800 flex items-center select-none text-xs shrink-0 overflow-visible z-10">
         <div
       class="h-full px-3 flex items-center justify-between border-r border-zinc-800/80 shrink-0"
       :style="{ width: `${splitRatio}%` }"
@@ -43,17 +39,7 @@ const toggleWrap = () => {
           title="Adicionar novo Tier/Level"
         >
           <span class="text-sky-400 font-bold">#</span>
-          <span>Tier</span>
-        </button>
-
-                <button
-          type="button"
-          @click="insertBullet"
-          class="flex items-center space-x-1 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white rounded border border-zinc-700/60 font-medium transition-colors"
-          title="Adicionar novo Item/Bullet"
-        >
-          <span class="text-emerald-400 font-bold">+</span>
-          <span>Bullet</span>
+          <span>Level</span>
         </button>
 
                 <div class="relative">
@@ -85,15 +71,7 @@ const toggleWrap = () => {
           </div>
         </div>
 
-                <button
-          type="button"
-          @click="toggleWrap"
-          class="px-2.5 py-1 rounded border font-medium transition-colors"
-          :class="editorWrap === 'on' ? 'bg-sky-500/20 border-sky-500/40 text-sky-300' : 'bg-zinc-800 border-zinc-700/60 text-zinc-400 hover:text-zinc-200'"
-          title="Quebra automática de linha"
-        >
-          Wrap
-        </button>
+
       </div>
 
             <div class="text-[11px] font-mono text-zinc-400 font-medium whitespace-nowrap pl-2">

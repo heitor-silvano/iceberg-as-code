@@ -30,7 +30,6 @@ const code = ref<string>(DEFAULT_CODE)
 const isDirty = ref<boolean>(false)
 const isLiveSyncing = ref<boolean>(false)
 const editorFontSize = ref<string>('13px')
-const editorWrap = ref<'on' | 'off'>('on')
 const previewZoom = ref<number>(100)
 const previewFont = ref<'sans' | 'mono'>('sans')
 const textAlpha = ref<boolean>(false)
@@ -127,11 +126,7 @@ export function useIceberg() {
   }
 
   const insertLevel = () => {
-    insertSnippet(`level "New Level"\n  Item 1\n  Item 2\n`)
-  }
-
-  const insertBullet = () => {
-    insertSnippet(`  New Item\n`)
+    insertSnippet(`\n\nlevel "New Level"\n  Item 1\n  Item 2\n`)
   }
 
   const zoomIn = () => {
@@ -176,7 +171,6 @@ export function useIceberg() {
     isDirty,
     isLiveSyncing,
     editorFontSize,
-    editorWrap,
     previewZoom,
     previewFont,
     textAlpha,
@@ -185,7 +179,6 @@ export function useIceberg() {
     isExporting,
     setMonacoInstance,
     insertLevel,
-    insertBullet,
     zoomIn,
     zoomOut,
     resetZoom,
