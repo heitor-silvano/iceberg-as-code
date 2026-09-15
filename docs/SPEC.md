@@ -9,8 +9,8 @@ A aplicação utiliza um parser próprio focado em simplicidade.
 
 ### Regras da Gramática
 1. **Configuração Global**: `max_random_offset = <numero>`. Usado para ditar a variação de deslocamento aleatório das entradas na camada.
-2. **Níveis (Tiers)**: Um nível é declarado usando a sintaxe `level "Nome do Nível"`. 
-   - Exemplo: `level "The Tip"` ou `level "Deep Waters"`.
+2. **Níveis (Tiers)**: Um nível é declarado usando a sintaxe `tier "Nome do Nível"`. 
+   - Exemplo: `tier "The Tip"` ou `tier "Deep Waters"`.
 3. **Entradas (Items)**: Pertencem ao último nível declarado e devem ser identadas com exatos 2 ou mais espaços (ou uma tabulação).
    - Exemplo: `  Item 1`
 4. **Comentários**: Linhas começando com `//` são ignoradas.
@@ -20,11 +20,11 @@ A aplicação utiliza um parser próprio focado em simplicidade.
 ```iceberg
 max_random_offset = 10
 
-level "Superfície"
+tier "Superfície"
   Google
   Youtube
 
-level "Águas Rasas"
+tier "Águas Rasas"
   Reddit
   4chan
 ```

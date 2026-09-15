@@ -6,30 +6,31 @@ describe('useIceberg composable', () => {
     resetStorageForTest()
   })
 
-  it('provides reactive code and computed ast', () => {
-    const { code, ast } = useIceberg()
+  it('provides reactive code, filename and computed ast', () => {
+    const { code, filename, ast } = useIceberg()
     expect(code.value).toBeDefined()
+    expect(filename.value).toBe('untitled-tier-list')
     expect(ast.value.levels.length).toBeGreaterThan(0)
   })
 
-  it('does not reset or clear code when typing level followed by space', () => {
+  it('does not reset or clear code when typing tier followed by space', () => {
     const { code, ast } = useIceberg()
     const originalCode = code.value
-    const newText = `${originalCode}\n\nlevel `
+    const newText = `${originalCode}\n\ntier `
 
     code.value = newText
 
     const anotherInstance = useIceberg()
 
     expect(anotherInstance.code.value).toBe(newText)
-    expect(anotherInstance.code.value).toContain('level ')
+    expect(anotherInstance.code.value).toContain('tier ')
     expect(anotherInstance.ast.value.totalLevels).toBe(ast.value.totalLevels)
     expect(anotherInstance.ast.value.isValid).toBe(true)
   })
 
   it('keeps code intact across multiple component invocations', () => {
     const instance1 = useIceberg()
-    const customContent = `level "Alpha"\n  Item A\n\nlevel \n`
+    const customContent = `tier "Alpha"\n  Item A\n\ntier \n`
     instance1.code.value = customContent
 
     const instance2 = useIceberg()
@@ -42,7 +43,7 @@ describe('useIceberg composable', () => {
 
   it('does not reload stale localStorage when subsequent components mount', () => {
     const storageMap = new Map<string, string>()
-    storageMap.set('iceberg_code_content', 'level "Old Tier"')
+    storageMap.set('iceberg_code_content', 'tier "Old Tier"')
     const originalWindow = globalThis.window
     const originalLocalStorage = globalThis.localStorage
 
@@ -60,12 +61,12 @@ describe('useIceberg composable', () => {
 
     try {
       const first = useIceberg()
-      expect(first.code.value).toBe('level "Old Tier"')
+      expect(first.code.value).toBe('tier "Old Tier"')
 
-      first.code.value = 'level "Old Tier"\n\nlevel '
+      first.code.value = 'tier "Old Tier"\n\ntier '
 
       const second = useIceberg()
-      expect(second.code.value).toBe('level "Old Tier"\n\nlevel ')
+      expect(second.code.value).toBe('tier "Old Tier"\n\ntier ')
     } finally {
       Object.defineProperty(globalThis, 'window', { value: originalWindow, configurable: true, writable: true })
       Object.defineProperty(globalThis, 'localStorage', { value: originalLocalStorage, configurable: true, writable: true })

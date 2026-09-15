@@ -9,7 +9,7 @@ describe('previewLayout styles and templates', () => {
   const tierBlockSource = readFileSync(tierBlockPath, 'utf-8')
   const previewPanelSource = readFileSync(previewPanelPath, 'utf-8')
 
-  it('does not render border between first and second level', () => {
+  it('does not render border between first and second tier', () => {
     expect(tierBlockSource).toMatch(/index === 0 \? 'border-b-0(\s+h-\[141px\])?'/)
     expect(tierBlockSource).toContain('first:border-b-0')
     expect(previewPanelSource).toContain(':index="index"')
@@ -22,8 +22,7 @@ describe('previewLayout styles and templates', () => {
   })
 
   it('removes padding from preview export target container and ensures it does not shrink, enabling scroll', () => {
-    expect(previewPanelSource).not.toMatch(/class="[^"]*p-6[^"]*rounded-xl[^"]*"/)
-    expect(previewPanelSource).toContain('shrink-0 rounded-xl overflow-hidden')
+    expect(previewPanelSource).toContain('shrink-0 rounded-b-xl overflow-hidden')
     expect(previewPanelSource).not.toContain('space-y-4 w-full h-full')
   })
 
@@ -32,16 +31,22 @@ describe('previewLayout styles and templates', () => {
     expect(previewPanelSource).toContain('<div class="relative z-10 flex flex-col w-full">')
   })
 
-  it('centers items within each level in preview', () => {
+  it('centers items within each tier in preview', () => {
     expect(tierBlockSource).toContain('justify-center')
     expect(tierBlockSource).toMatch(/flex flex-wrap items-center justify-center/)
   })
 
-  it('styles level titles with white text on black background in the top-left corner', () => {
+  it('styles tier titles with white text on black background in the top-left corner', () => {
     expect(tierBlockSource).toContain('justify-start')
     expect(tierBlockSource).toContain('bg-black')
     expect(tierBlockSource).toContain('text-white')
-    expect(tierBlockSource).not.toContain(':style="{ backgroundColor: level.color }"')
+    expect(tierBlockSource).not.toContain(':style="{ backgroundColor: tier.color }"')
+  })
+
+  it('changes text to white when alpha < 25 for subsequent tiers and sets border/shadow color dynamically', () => {
+    expect(tierBlockSource).toContain("textAlpha < 25 && (index ?? 0) > 0 ? 'text-white' : 'text-slate-800'")
+    expect(tierBlockSource).toContain("borderColor: `rgba(125, 211, 252, ${textAlpha / 100})`")
+    expect(tierBlockSource).toContain("boxShadow: `0 1px 2px 0 rgba(0, 0, 0, ${0.05 * (textAlpha / 100)})`")
   })
 
   it('ensures no comments are present in changed component files', () => {

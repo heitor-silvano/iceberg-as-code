@@ -7,7 +7,7 @@ export const icebergLanguageDefinition: monaco.languages.IMonarchLanguage = {
   defaultToken: '',
   tokenPostfix: '.iceberg',
   
-  keywords: ['level', 'max_random_offset'],
+  keywords: ['tier', 'max_random_offset'],
 
   tokenizer: {
     root: [
@@ -18,8 +18,8 @@ export const icebergLanguageDefinition: monaco.languages.IMonarchLanguage = {
       [/[0-9]+(\.[0-9]+)?/, 'number'],
       [/=/, 'operator'],
 
-      [/level\s+"([^"\\]|\\.)*"/, 'string.level-title'],
-      [/level\b/, 'keyword.level'],
+      [/tier\s+"([^"\\]|\\.)*"/, 'string.tier-title'],
+      [/tier\b/, 'keyword.tier'],
       [/"([^"\\]|\\.)*"/, 'string'],
 
       [/^(\s{2,}|\t)[^\n\r]+/, 'type.item'],
@@ -36,8 +36,8 @@ export const icebergThemeDefinition: monaco.editor.IStandaloneThemeData = {
     { token: 'comment', foreground: '71717a', fontStyle: 'italic' },
     { token: 'keyword.config', foreground: 'a78bfa', fontStyle: 'bold' },
     { token: 'number', foreground: 'fbbf24' },
-    { token: 'keyword.level', foreground: '38bdf8', fontStyle: 'bold' },
-    { token: 'string.level-title', foreground: '67e8f9', fontStyle: 'bold' },
+    { token: 'keyword.tier', foreground: '38bdf8', fontStyle: 'bold' },
+    { token: 'string.tier-title', foreground: '67e8f9', fontStyle: 'bold' },
     { token: 'string', foreground: 'a5f3fc' },
     { token: 'type.item', foreground: 'f4f4f5' },
     { token: 'operator', foreground: '94a3b8' },

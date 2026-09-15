@@ -1,5 +1,8 @@
 export interface IcebergConfig {
   maxRandomOffset: number
+  title?: string
+  backgroundAlpha?: number
+  font?: 'sans' | 'mono'
 }
 
 export interface IcebergLevel {

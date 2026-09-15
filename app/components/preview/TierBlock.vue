@@ -44,12 +44,17 @@ const itemTextStyles = computed(() => {
       <div
         v-for="(item, idx) in level.items"
         :key="idx"
-        class="px-2.5 py-1 bg-white/95 rounded-md border border-sky-300/60 shadow-sm text-xs text-slate-800 transition-all hover:bg-white select-none text-center"
+        class="px-2.5 py-1 rounded-md border text-xs transition-all hover:bg-white select-none text-center"
         :class="[
           fontClass,
-          textAlpha ? 'opacity-70' : 'opacity-100'
+          textAlpha < 25 && (index ?? 0) > 0 ? 'text-white' : 'text-slate-800'
         ]"
-        :style="itemTextStyles"
+        :style="{
+          backgroundColor: `rgba(255, 255, 255, ${textAlpha / 100})`,
+          borderColor: `rgba(125, 211, 252, ${textAlpha / 100})`,
+          boxShadow: `0 1px 2px 0 rgba(0, 0, 0, ${0.05 * (textAlpha / 100)})`,
+          ...itemTextStyles
+        }"
       >
         {{ item }}
       </div>

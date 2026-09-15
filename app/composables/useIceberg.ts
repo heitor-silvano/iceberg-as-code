@@ -3,22 +3,26 @@ import { IcebergParser } from '../lib/iceberg/parser'
 import type { IcebergResult } from '../lib/iceberg/types'
 import { toPng } from 'html-to-image'
 
-const DEFAULT_CODE = `max_random_offset = 10
+const DEFAULT_CODE = `settings: {
+  title: "untitled-tier-list";
+  background_alpha: 95;
+  font: "sans";
+}
 
-level "First Level"
+tier "First Tier"
   Google
   Youtube
   Facebook
   Instagram
   Twitter
 
-level "Second Level"
+tier "Second Tier"
   Reddit
   Myspace
   Orkut
   Dailymotion
 
-level "Third Level"
+tier "Third Tier"
   4chan
   Liveleak
 `
@@ -28,11 +32,8 @@ const SPLIT_KEY = 'iceberg_split_ratio'
 
 const code = ref<string>(DEFAULT_CODE)
 const isDirty = ref<boolean>(false)
-const isLiveSyncing = ref<boolean>(false)
 const editorFontSize = ref<string>('13px')
 const previewZoom = ref<number>(100)
-const previewFont = ref<'sans' | 'mono'>('sans')
-const textAlpha = ref<boolean>(false)
 const textStroke = ref<boolean>(false)
 const splitRatio = ref<number>(50)
 const isExporting = ref<boolean>(false)
@@ -66,15 +67,12 @@ function initStorage() {
     isDirty.value = true
     if (typeof window !== 'undefined') {
       clearTimeout(saveTimer)
-      isLiveSyncing.value = true
       saveTimer = setTimeout(() => {
         try {
           localStorage.setItem(STORAGE_KEY, newVal)
           isDirty.value = false
-        } finally {
-          setTimeout(() => {
-            isLiveSyncing.value = false
-          }, 300)
+        } catch (e) {
+          // Ignore
         }
       }, 500)
     }
@@ -102,6 +100,57 @@ export function useIceberg() {
     return IcebergParser(code.value)
   })
 
+  const updateSettingInCode = (key: string, value: string | number) => {
+    let currentCode = code.value
+    const settingsMatch = currentCode.match(/settings:\s*\{([^}]*)\}/)
+    
+    if (settingsMatch) {
+      let content = settingsMatch[1] || ''
+      const regex = new RegExp(`(${key}:\\s*)([^;\\n]+)`, 'i')
+      if (regex.test(content)) {
+        content = content.replace(regex, `$1${value}`)
+      } else {
+        content = content.replace(/\s*$/, `\n  ${key}: ${value};\n`)
+      }
+      currentCode = currentCode.replace(settingsMatch[0], `settings: {${content}}`)
+    } else {
+      // support removing old iceberg_title if it exists
+      if (/^iceberg_title:.*$/m.test(currentCode)) {
+        currentCode = currentCode.replace(/^iceberg_title:.*$/m, '')
+      }
+      currentCode = `settings: {\n  ${key}: ${value};\n}\n\n` + currentCode.trimStart()
+    }
+    code.value = currentCode
+  }
+
+  const filename = computed({
+    get() {
+      return ast.value.config.title || 'untitled-tier-list'
+    },
+    set(newVal) {
+      const sanitized = newVal.trim() || 'untitled-tier-list'
+      updateSettingInCode('title', `"${sanitized}"`)
+    }
+  })
+
+  const previewFont = computed({
+    get() {
+      return ast.value.config.font || 'sans'
+    },
+    set(newVal) {
+      updateSettingInCode('font', `"${newVal}"`)
+    }
+  })
+
+  const textAlpha = computed({
+    get() {
+      return ast.value.config.backgroundAlpha ?? 95
+    },
+    set(newVal) {
+      updateSettingInCode('background_alpha', newVal)
+    }
+  })
+
   const setMonacoInstance = (editor: any) => {
     monacoEditorInstance = editor
   }
@@ -125,8 +174,8 @@ export function useIceberg() {
     code.value = code.value.trimEnd() + '\n\n' + snippet + '\n'
   }
 
-  const insertLevel = () => {
-    insertSnippet(`\n\nlevel "New Level"\n  Item 1\n  Item 2\n`)
+  const insertTier = () => {
+    insertSnippet(`\n\ntier "New Tier"\n  Item 1\n  Item 2\n`)
   }
 
   const zoomIn = () => {
@@ -163,7 +212,8 @@ export function useIceberg() {
         }
       })
       const link = document.createElement('a')
-      link.download = 'untitled-tier-list.png'
+      const sanitizedName = filename.value.trim() || 'untitled-tier-list'
+      link.download = `${sanitizedName}.png`
       link.href = dataUrl
       link.click()
     } catch (err) {
@@ -175,9 +225,9 @@ export function useIceberg() {
 
   return {
     code,
+    filename,
     ast,
     isDirty,
-    isLiveSyncing,
     editorFontSize,
     previewZoom,
     previewFont,
@@ -186,7 +236,7 @@ export function useIceberg() {
     splitRatio,
     isExporting,
     setMonacoInstance,
-    insertLevel,
+    insertTier,
     zoomIn,
     zoomOut,
     resetZoom,

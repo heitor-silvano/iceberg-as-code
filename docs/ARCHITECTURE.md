@@ -35,5 +35,5 @@ app/
 ```
 
 ## Destaques de Implementação
-- O Monaco usa a API `monaco.languages.setMonarchTokensProvider` para entender os tokens de uma linguagem totalmente customizada e colorir as chaves `level` e strings em tempo real.
+- O Monaco usa a API `monaco.languages.setMonarchTokensProvider` para entender os tokens de uma linguagem totalmente customizada e colorir as chaves `tier` e strings em tempo real.
 - Todo processamento de AST e DOM Capture via canvas (`html-to-image`) é mantido estritamente no *Client-Side* para evitar erros de hidratação ou falta de APIs de browser no backend.

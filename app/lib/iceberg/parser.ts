@@ -7,17 +7,42 @@ const defaultConfig: IcebergConfig = {
   maxRandomOffset: 10,
 }
 
-export const detectLevelName = (text: string): string => {
+export const detectTierName = (text: string): string => {
   return text
-    .replace(/^level(\s+|$)/i, '')
+    .replace(/^tier(\s+|$)/i, '')
     .replaceAll('"', '')
     .trim()
 }
 
 export const IcebergParser = (icebergLanguageText: string): IcebergResult => {
-  const rows = icebergLanguageText.split('\n')
-  const rawLevels: Array<{ title: string; items: string[]; line: number }> = []
   const config: IcebergConfig = { ...defaultConfig }
+  let processedText = icebergLanguageText
+
+  const settingsMatch = processedText.match(/settings:\s*\{([^}]*)\}/)
+  if (settingsMatch) {
+    const settingsContent = settingsMatch[1] || ''
+    const pairs = settingsContent.split(/(?:;|\n)+/)
+    for (const pair of pairs) {
+      const parts = pair.split(/:(.*)/s)
+      if (parts.length > 1) {
+        const key = parts[0]?.trim()
+        const val = parts[1]?.trim().replace(/^"|"$/g, '').trim()
+        if (key === 'title') {
+          config.title = val
+        } else if (key === 'background_alpha') {
+          const alpha = parseInt(val, 10)
+          if (!isNaN(alpha)) config.backgroundAlpha = alpha
+        } else if (key === 'font') {
+          if (val === 'sans' || val === 'mono') config.font = val as 'sans' | 'mono'
+        }
+      }
+    }
+    const newlines = settingsMatch[0].replace(/[^\n]/g, '')
+    processedText = processedText.replace(settingsMatch[0], newlines)
+  }
+
+  const rows = processedText.split('\n')
+  const rawLevels: Array<{ title: string; items: string[]; line: number }> = []
   let currentRowIndex: number = -1
   let isValid = true
   let error: string | undefined = undefined
@@ -50,10 +75,10 @@ export const IcebergParser = (icebergLanguageText: string): IcebergResult => {
       continue
     }
 
-    if (/^level(\s+|$)/i.test(rawRow)) {
-      const rowTitle = detectLevelName(rawRow)
+    if (/^tier(\s+|$)/i.test(rawRow)) {
+      const rowTitle = detectTierName(rawRow)
       rawLevels.push({
-        title: rowTitle || `Level ${rawLevels.length + 1}`,
+        title: rowTitle || `Tier ${rawLevels.length + 1}`,
         items: [],
         line: lineIdx + 1,
       })
@@ -65,7 +90,7 @@ export const IcebergParser = (icebergLanguageText: string): IcebergResult => {
       if (currentRowIndex === -1) {
 
         rawLevels.push({
-          title: 'First Level',
+          title: 'First Tier',
           items: [],
           line: lineIdx + 1,
         })

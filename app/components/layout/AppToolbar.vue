@@ -9,7 +9,7 @@ const {
   previewZoom,
   previewFont,
   textAlpha,
-  insertLevel,
+  insertTier,
   zoomIn,
   zoomOut,
   resetZoom,
@@ -35,12 +35,12 @@ const selectFontSize = (size: string) => {
             <div class="flex items-center space-x-2">
                 <button
           type="button"
-          @click="insertLevel"
+          @click="insertTier"
           class="flex items-center space-x-1 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white rounded border border-zinc-700/60 font-medium transition-colors"
-          title="Adicionar novo Tier/Level"
+          title="Adicionar novo Tier"
         >
           <span class="text-sky-400 font-bold">#</span>
-          <span>Level</span>
+          <span>Tier</span>
         </button>
 
                 <div class="relative">
@@ -129,22 +129,16 @@ const selectFontSize = (size: string) => {
             <circle cx="12" cy="12" r="10" />
             <path d="M12 2a10 10 0 0 1 0 20Z" fill="currentColor" />
           </svg>
-          <span class="text-zinc-400 font-medium text-[11px]">Text Alpha</span>
+          <span class="text-zinc-400 font-medium text-[11px]">Background Alpha</span>
 
-          <button
-            type="button"
-            role="switch"
-            :aria-checked="textAlpha"
-            @click="textAlpha = !textAlpha"
-            class="peer inline-flex h-[20px] w-[36px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-            :class="textAlpha ? 'bg-zinc-200' : 'bg-zinc-700'"
-            title="Alternar opacidade do texto"
-          >
-            <span
-              class="pointer-events-none block h-4 w-4 rounded-full shadow-lg ring-0 transition-transform"
-              :class="textAlpha ? 'translate-x-4 bg-zinc-900' : 'translate-x-0 bg-zinc-400'"
-            ></span>
-          </button>
+          <input
+            type="range"
+            v-model="textAlpha"
+            min="0"
+            max="100"
+            class="w-20 h-1.5 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
+            title="Ajustar opacidade do fundo do texto"
+          />
         </div>
 
         <div class="flex items-center bg-zinc-950 p-0.5 rounded-lg border border-zinc-800">

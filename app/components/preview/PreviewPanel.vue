@@ -67,11 +67,11 @@ defineExpose({
     >
       <div
         ref="exportTargetRef"
-        class="w-full relative shrink-0 rounded-xl overflow-hidden transition-transform duration-100 ease-out min-h-[800px]"
+        class="w-full relative shrink-0 rounded-b-xl overflow-hidden transition-transform duration-100 ease-out min-h-[800px]"
         :class="previewZoom > 100 ? 'origin-top-left' : 'origin-top'"
         :style="{ transform: `scale(${previewZoom / 100})` }"
       >
-        <div class="absolute inset-0 z-0 pointer-events-none rounded-xl overflow-hidden">
+        <div class="absolute inset-0 z-0 pointer-events-none rounded-b-xl overflow-hidden">
           <div class="absolute inset-x-0 top-0 h-[141px] bg-[#bfe3f7] z-0"></div>
           <div class="absolute inset-x-0 bottom-0 bg-black z-0 top-[141px]"></div>
         </div>
