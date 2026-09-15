@@ -20,6 +20,11 @@ Qualquer agente de Inteligência Artificial ou Desenvolvedor deve consultar este
 - [ ] **Mudar favicon**
 - [ ] **Mudar logo da aplicação**
 - [ ] **Adicionar mudança de fonte programaticamente**
+- [ ] **Export Options**: O botão export deve ser um dropdown com duas opções: PNG e txt.
+- [ ] **Contagens UI**: Remover redundância de contagens de tiers e entries no menu acima do editor de texto, mantendo apenas no rodapé do editor.
+- [ ] **Controle de Fonte**: Mudar forma de alterar tamanho do texto do editor (clique `^` para aumentar fonte, `v` para diminuir).
+- [ ] **Proporção Iceberg**: Mudar tamanho do corpo do iceberg para ficar proporcional ao tip.
+- [ ] **Remoção UI**: Botão de 'X' para remover itens da tier na UI.
 
 ## 🐞 Bugs / Dívida Técnica
 - Quando nomes de níveis são extremamente grandes, o texto pode quebrar para a linha de baixo dependendo do tamanho da tela. Adicionar classe de `.truncate` ou flex-wrap com limites adequados.
