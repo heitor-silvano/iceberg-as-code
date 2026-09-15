@@ -79,7 +79,7 @@ defineExpose({
         <div class="absolute inset-0 z-0 flex flex-col items-center pointer-events-none mt-5">
           <div class="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#2877D222] to-[#000000] z-[5] top-[121px]"></div>
           
-          <img src="/iceberg-tip.svg" class="w-[294px] shrink-0 relative z-20" />
+          <img src="/iceberg-tip.svg" class="w-[294px] max-w-none shrink-0 relative z-20" />
           <div class="w-full h-[45px] shrink-0 -mt-[45px] relative z-10">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -90,7 +90,7 @@ defineExpose({
               <rect width="100%" height="100%" fill="url(#waves)" />
             </svg>
           </div>
-          <img src="/iceberg-body.svg" class="w-[446px] shrink-0 relative z-[4] -mt-[10px]" />
+          <img src="/iceberg-body.svg" class="w-[520px] max-w-none shrink-0 relative z-[4] -mt-[10px]" />
           <div class="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#2877D2] to-[#0B1F36] z-0 top-[121px]"></div>
         </div>
 
