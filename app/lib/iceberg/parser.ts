@@ -9,7 +9,7 @@ const defaultConfig: IcebergConfig = {
 
 export const detectLevelName = (text: string): string => {
   return text
-    .replace(/^level\s+/i, '')
+    .replace(/^level(\s+|$)/i, '')
     .replaceAll('"', '')
     .trim()
 }
@@ -50,7 +50,7 @@ export const IcebergParser = (icebergLanguageText: string): IcebergResult => {
       continue
     }
 
-    if (/^level\s+/i.test(rawRow)) {
+    if (/^level(\s+|$)/i.test(rawRow)) {
       const rowTitle = detectLevelName(rawRow)
       rawLevels.push({
         title: rowTitle || `Level ${rawLevels.length + 1}`,

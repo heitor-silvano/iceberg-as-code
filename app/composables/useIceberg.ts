@@ -1,4 +1,4 @@
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, getCurrentInstance } from 'vue'
 import { IcebergParser } from '../lib/iceberg/parser'
 import type { IcebergResult } from '../lib/iceberg/types'
 import { toPng } from 'html-to-image'
@@ -39,25 +39,28 @@ const splitRatio = ref<number>(50)
 const isExporting = ref<boolean>(false)
 
 let monacoEditorInstance: any = null
+let isInitialized = false
 
-export function useIceberg() {
+export function resetStorageForTest() {
+  isInitialized = false
+}
 
-  onMounted(() => {
-    if (typeof window !== 'undefined') {
-      const savedCode = localStorage.getItem(STORAGE_KEY)
-      if (savedCode !== null && savedCode.trim() !== '') {
-        code.value = savedCode
-      }
+function initStorage() {
+  if (typeof window === 'undefined' || isInitialized) return
+  isInitialized = true
 
-      const savedSplit = localStorage.getItem(SPLIT_KEY)
-      if (savedSplit) {
-        const parsed = parseFloat(savedSplit)
-        if (!isNaN(parsed) && parsed >= 20 && parsed <= 80) {
-          splitRatio.value = parsed
-        }
-      }
+  const savedCode = localStorage.getItem(STORAGE_KEY)
+  if (savedCode !== null && savedCode.trim() !== '') {
+    code.value = savedCode
+  }
+
+  const savedSplit = localStorage.getItem(SPLIT_KEY)
+  if (savedSplit) {
+    const parsed = parseFloat(savedSplit)
+    if (!isNaN(parsed) && parsed >= 20 && parsed <= 80) {
+      splitRatio.value = parsed
     }
-  })
+  }
 
   let saveTimer: any = null
   watch(code, (newVal) => {
@@ -83,6 +86,18 @@ export function useIceberg() {
       localStorage.setItem(SPLIT_KEY, newVal.toString())
     }
   })
+}
+
+export function useIceberg() {
+  if (!isInitialized) {
+    if (getCurrentInstance()) {
+      onMounted(() => {
+        initStorage()
+      })
+    } else {
+      initStorage()
+    }
+  }
 
   const ast = computed<IcebergResult>(() => {
     return IcebergParser(code.value)

@@ -43,9 +43,9 @@ export const icebergThemeDefinition: monaco.editor.IStandaloneThemeData = {
     { token: 'operator', foreground: '94a3b8' },
   ],
   colors: {
-    'editor.background': '#18181b', // zinc-900
-    'editor.foreground': '#f4f4f5', // zinc-100
-    'editorLineNumber.foreground': '#52525b', // zinc-600
+    'editor.background': '#18181b',
+    'editor.foreground': '#f4f4f5',
+    'editorLineNumber.foreground': '#52525b',
     'editorLineNumber.activeForeground': '#a1a1aa',
     'editor.lineHighlightBackground': '#27272a55',
     'editorCursor.foreground': '#38bdf8',

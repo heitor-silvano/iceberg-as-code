@@ -13,13 +13,18 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col bg-gradient-to-b from-[#bfe3f7] to-[#000000] relative overflow-hidden select-none">
-    <div class="flex-1 overflow-auto flex flex-col items-center">
+  <div class="w-full h-full flex flex-col bg-black relative overflow-hidden select-none">
+    <div class="flex-1 overflow-auto flex flex-col items-center relative z-10">
       <div
         ref="exportTargetRef"
         class="w-full relative p-6 rounded-xl transition-transform duration-100 ease-out origin-top min-h-[800px]"
         :style="{ transform: `scale(${previewZoom / 100})` }"
       >
+        <div class="absolute inset-0 z-0 pointer-events-none rounded-xl overflow-hidden">
+          <div class="absolute inset-x-0 top-0 h-[141px] bg-[#bfe3f7] z-0"></div>
+          <div class="absolute inset-x-0 bottom-0 bg-black z-0 top-[141px]"></div>
+        </div>
+
         <div class="absolute inset-0 z-0 flex flex-col items-center pointer-events-none mt-5">
           <div class="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[#2877D222] to-[#000000] z-[5] top-[121px]"></div>
           
