@@ -9,7 +9,7 @@ describe('useIceberg composable', () => {
   it('provides reactive code, filename and computed ast', () => {
     const { code, filename, ast } = useIceberg()
     expect(code.value).toBeDefined()
-    expect(filename.value).toBe('untitled-tier-list')
+    expect(filename.value).toBe('untitled-1')
     expect(ast.value.levels.length).toBeGreaterThan(0)
   })
 
